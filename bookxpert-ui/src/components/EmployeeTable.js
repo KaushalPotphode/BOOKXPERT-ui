@@ -88,6 +88,5 @@ function EmployeeTable({ employees, onEmployeeUpdated }) {
     </div>
   );
 }
-// comment for test
 
 export default EmployeeTable;
