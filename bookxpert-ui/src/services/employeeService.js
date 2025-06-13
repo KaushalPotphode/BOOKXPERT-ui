@@ -1,7 +1,7 @@
 // src/services/employeeService.js
 import axios from 'axios';
 
-const API_URL = 'https://localhost:5001/api/employee';
+const API_URL = 'https://localhost:7177/api/employee';
 
 export const getEmployees = () => axios.get(`${API_URL}`);
 export const getStates = () => axios.get(`${API_URL}/states`);

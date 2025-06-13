@@ -1,8 +1,8 @@
 // src/components/EmployeeForm.js
 import React, { useState, useEffect } from 'react';
-import { getStates, createEmployee } from '../services/employeeService';
+import { getStates, createEmployee, updateEmployee } from '../services/employeeService';
 
-function EmployeeForm({ onEmployeeAdded }) {
+function EmployeeForm({ employee, onEmployeeUpdated }) {
   const [form, setForm] = useState({
     name: '',
     designation: '',
@@ -17,7 +17,21 @@ function EmployeeForm({ onEmployeeAdded }) {
 
   useEffect(() => {
     getStates().then(res => setStates(res.data)).catch(err => console.error(err));
-  }, []);
+    if (employee) {
+      const formattedDateOfBirth = employee.dateOfBirth?.substring(0, 10); // Extract YYYY-MM-DD
+      const calculatedAge = calculateAge(formattedDateOfBirth);
+      setForm({
+        name: employee.name || '',
+        designation: employee.designation || '',
+        dateOfJoin: employee.dateOfJoin?.substring(0, 10) || '', // Extract YYYY-MM-DD
+        salary: employee.salary || '',
+        gender: employee.gender || '',
+        state: employee.state || '',
+        dateOfBirth: formattedDateOfBirth || '',
+        age: calculatedAge || ''
+      });
+    }
+  }, [employee]);
 
   const calculateAge = (dob) => {
     const birth = new Date(dob);
@@ -42,16 +56,24 @@ function EmployeeForm({ onEmployeeAdded }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createEmployee(form);
-      onEmployeeAdded();
+      if (employee) {
+        await updateEmployee(employee.id, form);
+      } else {
+        await createEmployee(form);
+      }
+      onEmployeeUpdated();
       setForm({ name: '', designation: '', dateOfJoin: '', salary: '', gender: '', state: '', dateOfBirth: '', age: '' });
     } catch (err) {
-      console.error('Failed to add employee:', err);
+      console.error('Failed to save employee:', err);
     }
   };
 
+  const handleClearForm = () => {
+    setForm({ name: '', designation: '', dateOfJoin: '', salary: '', gender: '', state: '', dateOfBirth: '', age: '' });
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="border p-3 rounded bg-light">
+    <form onSubmit={handleSubmit}>
       <div className="row">
         <div className="col-md-4 mb-2">
           <label>Name</label>
@@ -96,8 +118,8 @@ function EmployeeForm({ onEmployeeAdded }) {
         </div>
       </div>
       <div className="mt-3">
-        <button type="submit" className="btn btn-primary me-2">Submit</button>
-        <button type="button" onClick={() => setForm({ name: '', designation: '', dateOfJoin: '', salary: '', gender: '', state: '', dateOfBirth: '', age: '' })} className="btn btn-secondary">Clear Form</button>
+        <button type="submit" className="btn btn-primary me-2">{employee ? 'Update' : 'Submit'}</button>
+        <button type="button" className="btn btn-secondary" onClick={handleClearForm}>Clear Form</button>
       </div>
     </form>
   );
