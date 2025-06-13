@@ -24,7 +24,7 @@ function App() {
     <div className="container mt-4">
       <h2 className="text-center mb-4">📘 BookXpert Employee Management</h2>
       <p className="text-muted text-center">Use the form below to add employees and view the list below.</p>
-      <EmployeeForm onEmployeeAdded={fetchEmployees} />
+      {/* <EmployeeForm onEmployeeAdded={fetchEmployees} /> */}
       <hr />
       <EmployeeTable employees={employees} onEmployeeUpdated={fetchEmployees} />
     </div>
